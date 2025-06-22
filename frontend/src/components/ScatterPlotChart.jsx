@@ -23,20 +23,37 @@ const ScatterPlotChart = () => {
   const { selectedProduct, selectedState, topN } = useFilterStore();
   const isMobile = useMediaQuery({ maxWidth: 639 });
 
-  const { data: res, isLoading, error } = useQuery({
-    queryKey: ["salesCorrelation", { state: selectedState, product: selectedProduct, topN }],
-    queryFn: () => {
-      const params = {};
-      if (selectedState) params.state = selectedState;
-      params.page = 1;
-      params.pageSize = topN != null ? Math.min(topN * 100, 1000) : 1000;
-      return getScatterPlotData(params);
-    },
-    keepPreviousData: true,
-    onError: (err) => console.error("ScatterPlotChart fetch error:", err),
-  });
+  const fetchAllCorrelation = async () => {
+    const allItems = [];
+    let page = 1;
+    const pageSize = 1000;
+    while (true) {
+      const params = { page, pageSize };
 
-  const data = res?.data || [];
+      if (selectedState) params.state = selectedState;
+      const res = await getScatterPlotData(params);
+
+      let items = [];
+      if (Array.isArray(res.data)) {
+        items = res.data;
+      } else if (res.data && Array.isArray(res.data.data)) {
+        items = res.data.data;
+      }
+      if (!items.length) break;
+      allItems.push(...items);
+      if (items.length < pageSize) break;
+      page += 1;
+    }
+    return allItems;
+  };
+
+  const { data: allData, isLoading, error } = useQuery({
+    queryKey: ["salesCorrelationAll", { state: selectedState, product: selectedProduct }],
+    queryFn: fetchAllCorrelation,
+
+    keepPreviousData: false,
+    onError: (err) => console.error("ScatterPlot fetchAll error:", err),
+  });
 
   if (isLoading) {
     return (
@@ -50,10 +67,15 @@ const ScatterPlotChart = () => {
     return <p className="text-center text-red-600">Error fetching data.</p>;
   }
 
-  let filtered = data;
-  if (selectedProduct) {
-    filtered = filtered.filter((d) => d.product === selectedProduct);
+  const rawItems = allData || [];
+  let filtered = rawItems;
+  if (selectedState) {
+    filtered = filtered.filter(d => d.state === selectedState);
   }
+  if (selectedProduct) {
+    filtered = filtered.filter(d => d.product === selectedProduct);
+  }
+
   const productQty = [...new Set(filtered.map((d) => d.product))].map((product) => {
     const totalQty = filtered
       .filter((d) => d.product === product)
@@ -66,7 +88,7 @@ const ScatterPlotChart = () => {
   filtered = filtered.filter((d) => topProducts.includes(d.product));
 
   const states = [...new Set(filtered.map((d) => d.state))];
-  const traces = states.flatMap((state, i) => {
+  const traces = states.flatMap((state) => {
     const byState = filtered.filter((d) => d.state === state);
     const x = byState.map((d) => parseInt(d.quantity, 10));
     const y = byState.map((d) => parseFloat(d.discount));
@@ -110,14 +132,14 @@ const ScatterPlotChart = () => {
   }
 
   const marginLayout = isMobile
-    ? { t: 20, b: 100, l: 50, r: 20 }
+    ? { t: 1, b: 100, l: 50, r: 20 }
     : { t: 20, b: 40, l: 50, r: 150 };
   const legendLayout = isMobile
     ? {
         orientation: "h",
         x: 0.5,
         xanchor: "center",
-        y: -0.3,
+        y: -1,
         yanchor: "top",
         title: {
           text: "State",
@@ -151,18 +173,18 @@ const ScatterPlotChart = () => {
             legend: legendLayout,
             xaxis: {
               title: {
-                text: "Quantity Sold",
-                font: { size: 12 },
-                standoff: 15,
+                text: "Quantity",
+                font: { size: 11 },
+                standoff: 1,
               },
               tickfont: { size: 10 },
               automargin: true,
             },
             yaxis: {
               title: {
-                text: "Discount Given",
-                font: { size: 12 },
-                standoff: 15,
+                text: "Discount",
+                font: { size: 11 },
+                standoff: 5,
               },
               tickfont: { size: 10 },
               automargin: true,
