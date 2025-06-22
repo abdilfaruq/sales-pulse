@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'https://sales-pulse-production-2278.up.railway.app',
         changeOrigin: true,
         rewrite: (path) => path,
       },
