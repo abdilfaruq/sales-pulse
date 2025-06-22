@@ -19,7 +19,7 @@ Below is an in-depth overview of each, including features, technologies, and set
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/sales-pulse.git
+git clone https://github.com/abdilfaruq/sales-pulse.git
 cd sales-pulse
 ```
 
@@ -241,7 +241,6 @@ Located in `frontend/`, this React application consumes the backend APIs and ren
 
 ## 🛡️ Security & Best Practices
 
-* Do not commit secrets; use separate `.env` in each subfolder.
 * Validate all inputs on backend; sanitize on frontend.
 * Secure CORS configuration to only allow approved origins.
 * Implement authentication/authorization if endpoints should be protected.
@@ -269,6 +268,13 @@ Below are screenshots from the application, from top to bottom.
    ![Comparison Screenshot 5](frontend/public/screenshots/screenshot5.jpg)
 
 ---
+
+## 🌐 Live Website
+
+You can try the deployed version here:  
+👉 [https://sales-pulse.netlify.app](https://sales-pulse.netlify.app)
+
+Hosted on Netlify, connected to the production backend at Railway.
 
 ## 📝 License
 
