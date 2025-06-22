@@ -9,7 +9,12 @@ const knex = require('./db/knex');
 const config = require('./config/default');
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173' })); 
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://sales-pulse.netlify.app'
+  ]
+}));
 
 app.use(morgan('combined', {
   stream: {
