@@ -20,7 +20,7 @@ async function getSalesTimeSeries({ start_date, end_date, interval = 'month', ca
 
   let query = knex('sales as s')
     .select(knex.raw(`${dateTruncSql} AS period`))
-    .sum({ total_sales: 's.sales' })
+    .sum({ total_sales: 's.sales_amount' })
     .sum({ total_profit: 's.profit' })
     .whereBetween('s.order_date', [start_date, end_date]);
 
@@ -48,6 +48,12 @@ async function getSalesTimeSeries({ start_date, end_date, interval = 'month', ca
 
 
 async function getKPISummary({ start_date, end_date, category, state }) {
+  if (new Date(start_date) > new Date(end_date)) {
+    const err = new Error('start_date must be before or equal to end_date');
+    err.status = 400;
+    throw err;
+  }
+
   let query = knex('sales as s').whereBetween('s.order_date', [start_date, end_date]);
 
   if (category) {
@@ -64,7 +70,7 @@ async function getKPISummary({ start_date, end_date, category, state }) {
   const result = await query
     .clone()
     .select(
-      knex.raw('COALESCE(SUM(s.sales),0)::float AS total_sales'),
+      knex.raw('COALESCE(SUM(s.sales_amount),0)::float AS total_sales'),
       knex.raw('COALESCE(SUM(s.profit),0)::float AS total_profit'),
       knex.raw('COALESCE(AVG(s.discount),0)::float AS avg_discount'),
       knex.raw('COUNT(DISTINCT s.order_id) AS total_orders')
@@ -78,6 +84,7 @@ async function getKPISummary({ start_date, end_date, category, state }) {
     total_orders: parseInt(result.total_orders, 10) || 0,
   };
 }
+
 
 async function getComparison({ period1_start, period1_end, period2_start, period2_end, category, state }) {
   const summary1 = await getKPISummary({ start_date: period1_start, end_date: period1_end, category, state });
