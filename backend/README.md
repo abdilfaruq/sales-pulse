@@ -33,8 +33,16 @@ Sales Pulse is a backend service for retail sales analytics based on supermarket
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-org/sales-pulse-backend.git
-cd sales-pulse-backend
+# Clone the repository
+git clone https://github.com/abdilfaruq/sales-pulse.git
+
+# Navigate into the project directory
+cd sales-pulse
+
+# Go to the backend folder
+cd backend
+
+# Install dependencies
 npm install
 ```
 
@@ -47,7 +55,7 @@ Create a `.env` file at the project root based on `.env.example`. Example variab
 PG_PORT=5432
 PG_USER=postgres
 PG_PASSWORD=your_password
-PG_DATABASE=sales_pulse
+PG_DATABASE=your_database
 
 # Logging
 LOG_LEVEL=info
@@ -60,12 +68,7 @@ ETL_FILE_PATH=data/supermarket.xlsx
 
 # CORS origin (frontend URL)
 CORS_ORIGIN=http://localhost:5173
-
-# (Optional) JWT or other secrets
-# JWT_SECRET=your_jwt_secret
 ```
-
-> **Note**: Do not commit `.env` to version control. Use `.env.example` as a template.
 
 ### 3. Database Setup & Migrations
 
@@ -328,7 +331,6 @@ Base URL: `http://{HOST}:{PORT}/api`
 
 ## 🔒 Security
 
-* **Environment Variables**: Do not commit secrets; use hosting platform secrets management.
 * **Input Validation**: Zod to validate and sanitize all query parameters.
 * **SQL Injection**: Knex parameterized queries mitigate risk.
 * **CORS**: Restrict to frontend origins only.
