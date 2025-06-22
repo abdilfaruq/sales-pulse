@@ -43,11 +43,19 @@ Built with:
 
 1. **Clone Repository**
 
-   ```bash
-   git clone https://github.com/your-org/sales-pulse-frontend.git
-   cd sales-pulse-frontend
-   npm install
-   ```
+    ```bash
+    # Clone the repository
+    git clone https://github.com/abdilfaruq/sales-pulse.git
+
+    # Navigate into the project directory
+    cd sales-pulse
+
+    # Go to the frontend folder
+    cd frontend
+
+    # Install dependencies
+    npm install
+    ```
 
 2. **Environment Variables**
 
@@ -209,7 +217,6 @@ export async function getSalesComparison(params = {}) {
 ## 🎨 Styling & Theming
 
 * **Tailwind CSS** for utility-first styling.
-* Dark mode support via `dark:` classes. Ensure root `<html>` or `<body>` has `class="dark"` for dark mode.
 * Responsive font sizes: use `text-xs sm:text-sm text-base sm:text-lg` as in components.
 * Container and card backgrounds: semi-transparent backgrounds (`bg-white/70`, `bg-purple-100/20 dark:bg-purple-800/20`, etc.) and backdrop blur for glassmorphic effect.
 * Spacing and layout: flex, grid, gap utilities for responsive arrangement.
