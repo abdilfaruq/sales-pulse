@@ -1,11 +1,11 @@
 exports.up = function(knex) {
-  return knex.schema.alterTable('sales', table => {
-    table.unique(['order_id', 'product_id']);
+  return knex.schema.createTable('categories', table => {
+    table.increments('id').primary();
+    table.string('name').notNullable();
+    table.timestamps(true, true);
   });
 };
 
 exports.down = function(knex) {
-  return knex.schema.alterTable('sales', table => {
-    table.dropUnique(['order_id', 'product_id']);
-  });
+  return knex.schema.dropTableIfExists('categories');
 };
